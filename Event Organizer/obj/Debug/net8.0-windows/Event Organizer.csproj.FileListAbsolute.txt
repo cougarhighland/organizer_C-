@@ -14,3 +14,4 @@ C:\Users\xuand\source\repos\Event Organizer\Event Organizer\obj\Debug\net8.0-win
 C:\Users\xuand\source\repos\Event Organizer\Event Organizer\obj\Debug\net8.0-windows\Event Organizer.pdb
 C:\Users\xuand\source\repos\Event Organizer\Event Organizer\obj\Debug\net8.0-windows\Event Organizer.genruntimeconfig.cache
 C:\Users\xuand\source\repos\Event Organizer\Event Organizer\obj\Debug\net8.0-windows\ref\Event Organizer.dll
+C:\Users\xuand\source\repos\Event Organizer\Event Organizer\obj\Debug\net8.0-windows\Event Organizer.sourcelink.json

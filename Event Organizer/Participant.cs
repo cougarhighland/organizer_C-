@@ -4,9 +4,10 @@ public class Participant
 {
     // Private Fields
     private Address address;
-    private string firstName;
-    private string lastName;
+    private string firstName = string.Empty;
+    private string lastName = string.Empty;
 
+    #region PROPERTIES
     // Properties
     public Address Address
     {
@@ -27,37 +28,45 @@ public class Participant
     }
 
     public string FullName => $"{firstName} {lastName}";
-
-
+    #endregion
+    #region CONTRUCTOR
     // Constructors
     public Participant()
     {
-    }
-
-    public Participant(Participant theOther)
-    {
-        this.address = new Address(theOther.address);
-        this.firstName = theOther.firstName;
-        this.lastName = theOther.lastName;
+        address = new Address();
     }
 
     public Participant(string firstName, string lastName, Address adr)
     {
-        this.address = adr;
         this.firstName = firstName;
         this.lastName = lastName;
+        if(adr != null)
+        {
+            address = adr;
+        }
+        else
+        {
+            address = new Address();
+        }
     }
-
+    public Participant(Participant theOther) 
+    {
+        this.firstName=theOther.FirstName;
+        this.lastName=theOther.LastName;
+        this.address = new Address(theOther.Address);
+    }
+    #endregion
     // Methods
     public override string ToString()
     {
-        return $"{FullName}: {address.GetAddressLabel()}";
+        string strOut = string.Format("{0, -21} {1}", FullName, address.ToString());
+        return strOut;
     }
 
     public bool Validate()
     {
-        // Add validation logic here
-        // For simplicity, assuming all fields must be non-null or non-empty
-        return address != null && !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName) && address.Validate();
+        bool addrOk = address.Validate();
+        bool namesOk = !string.IsNullOrEmpty(firstName) && !string.IsNullOrEmpty(lastName);
+        return addrOk && namesOk;
     }
 }

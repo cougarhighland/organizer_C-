@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             grpNewEvent = new GroupBox();
@@ -53,22 +54,29 @@
             label5 = new Label();
             lblFirstName = new Label();
             lstParticipants = new ListView();
+            FullName = new ColumnHeader();
+            Address = new ColumnHeader();
+            zipCode = new ColumnHeader();
+            city = new ColumnHeader();
             label10 = new Label();
             label11 = new Label();
             btnChange = new Button();
             btnDelete = new Button();
             groupBox3 = new GroupBox();
-            textBox12 = new TextBox();
+            txtSurplusOrDeficit = new TextBox();
             label15 = new Label();
-            textBox9 = new TextBox();
-            textBox10 = new TextBox();
-            textBox11 = new TextBox();
+            txtTotalFees = new TextBox();
+            txtTotalCost = new TextBox();
+            txtNumParticipant = new TextBox();
             lblTotalFees = new Label();
             lblTotalCost = new Label();
             lblNumParticipants = new Label();
+            city_err = new ErrorProvider(components);
+            backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             grpNewEvent.SuspendLayout();
             grpParticipants.SuspendLayout();
             groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)city_err).BeginInit();
             SuspendLayout();
             // 
             // grpNewEvent
@@ -95,6 +103,7 @@
             btnCreateEvent.TabIndex = 6;
             btnCreateEvent.Text = "Create Event";
             btnCreateEvent.UseVisualStyleBackColor = true;
+            btnCreateEvent.Click += btnCreateEvent_Click;
             // 
             // txtFee
             // 
@@ -187,6 +196,7 @@
             txtCity.Name = "txtCity";
             txtCity.Size = new Size(222, 23);
             txtCity.TabIndex = 10;
+            txtCity.TextChanged += txtCity_TextChanged;
             // 
             // label9
             // 
@@ -275,11 +285,35 @@
             // 
             // lstParticipants
             // 
+            lstParticipants.Columns.AddRange(new ColumnHeader[] { FullName, Address, zipCode, city });
+            lstParticipants.FullRowSelect = true;
+            lstParticipants.HeaderStyle = ColumnHeaderStyle.None;
             lstParticipants.Location = new Point(395, 45);
             lstParticipants.Name = "lstParticipants";
             lstParticipants.Size = new Size(552, 97);
             lstParticipants.TabIndex = 8;
             lstParticipants.UseCompatibleStateImageBehavior = false;
+            lstParticipants.View = View.Details;
+            lstParticipants.SelectedIndexChanged += lstParticipants_SelectedIndexChanged;
+            // 
+            // FullName
+            // 
+            FullName.Text = "fullName";
+            FullName.Width = 180;
+            // 
+            // Address
+            // 
+            Address.Text = "address";
+            Address.Width = 180;
+            // 
+            // zipCode
+            // 
+            zipCode.Text = "zipcode";
+            // 
+            // city
+            // 
+            city.Text = "city";
+            city.Width = 100;
             // 
             // label10
             // 
@@ -307,6 +341,7 @@
             btnChange.TabIndex = 7;
             btnChange.Text = "Change";
             btnChange.UseVisualStyleBackColor = true;
+            btnChange.Click += btnChange_Click;
             // 
             // btnDelete
             // 
@@ -319,11 +354,11 @@
             // 
             // groupBox3
             // 
-            groupBox3.Controls.Add(textBox12);
+            groupBox3.Controls.Add(txtSurplusOrDeficit);
             groupBox3.Controls.Add(label15);
-            groupBox3.Controls.Add(textBox9);
-            groupBox3.Controls.Add(textBox10);
-            groupBox3.Controls.Add(textBox11);
+            groupBox3.Controls.Add(txtTotalFees);
+            groupBox3.Controls.Add(txtTotalCost);
+            groupBox3.Controls.Add(txtNumParticipant);
             groupBox3.Controls.Add(lblTotalFees);
             groupBox3.Controls.Add(lblTotalCost);
             groupBox3.Controls.Add(lblNumParticipants);
@@ -334,13 +369,13 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Event economy";
             // 
-            // textBox12
+            // txtSurplusOrDeficit
             // 
-            textBox12.Location = new Point(191, 116);
-            textBox12.Name = "textBox12";
-            textBox12.ReadOnly = true;
-            textBox12.Size = new Size(128, 23);
-            textBox12.TabIndex = 8;
+            txtSurplusOrDeficit.Location = new Point(191, 116);
+            txtSurplusOrDeficit.Name = "txtSurplusOrDeficit";
+            txtSurplusOrDeficit.ReadOnly = true;
+            txtSurplusOrDeficit.Size = new Size(128, 23);
+            txtSurplusOrDeficit.TabIndex = 8;
             // 
             // label15
             // 
@@ -351,29 +386,29 @@
             label15.TabIndex = 7;
             label15.Text = "Surplus/deficit";
             // 
-            // textBox9
+            // txtTotalFees
             // 
-            textBox9.Location = new Point(191, 87);
-            textBox9.Name = "textBox9";
-            textBox9.ReadOnly = true;
-            textBox9.Size = new Size(128, 23);
-            textBox9.TabIndex = 5;
+            txtTotalFees.Location = new Point(191, 87);
+            txtTotalFees.Name = "txtTotalFees";
+            txtTotalFees.ReadOnly = true;
+            txtTotalFees.Size = new Size(128, 23);
+            txtTotalFees.TabIndex = 5;
             // 
-            // textBox10
+            // txtTotalCost
             // 
-            textBox10.Location = new Point(191, 61);
-            textBox10.Name = "textBox10";
-            textBox10.ReadOnly = true;
-            textBox10.Size = new Size(128, 23);
-            textBox10.TabIndex = 4;
+            txtTotalCost.Location = new Point(191, 61);
+            txtTotalCost.Name = "txtTotalCost";
+            txtTotalCost.ReadOnly = true;
+            txtTotalCost.Size = new Size(128, 23);
+            txtTotalCost.TabIndex = 4;
             // 
-            // textBox11
+            // txtNumParticipant
             // 
-            textBox11.Location = new Point(191, 25);
-            textBox11.Name = "textBox11";
-            textBox11.ReadOnly = true;
-            textBox11.Size = new Size(128, 23);
-            textBox11.TabIndex = 3;
+            txtNumParticipant.Location = new Point(191, 25);
+            txtNumParticipant.Name = "txtNumParticipant";
+            txtNumParticipant.ReadOnly = true;
+            txtNumParticipant.Size = new Size(128, 23);
+            txtNumParticipant.TabIndex = 3;
             // 
             // lblTotalFees
             // 
@@ -402,6 +437,10 @@
             lblNumParticipants.TabIndex = 0;
             lblNumParticipants.Text = "Number of participants";
             // 
+            // city_err
+            // 
+            city_err.ContainerControl = this;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -424,6 +463,7 @@
             grpParticipants.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)city_err).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -464,9 +504,15 @@
         private Label lblTotalFees;
         private Label lblTotalCost;
         private Label lblNumParticipants;
-        private TextBox textBox12;
-        private TextBox textBox9;
-        private TextBox textBox10;
-        private TextBox textBox11;
+        private TextBox txtSurplusOrDeficit;
+        private TextBox txtTotalFees;
+        private TextBox txtTotalCost;
+        private TextBox txtNumParticipant;
+        private ColumnHeader FullName;
+        private ColumnHeader Address;
+        private ColumnHeader zipCode;
+        private ColumnHeader city;
+        private ErrorProvider city_err;
+        private System.ComponentModel.BackgroundWorker backgroundWorker3;
     }
 }

@@ -2,21 +2,33 @@
 
 public class EventManager
 {
-    private double costPerPerson;
-    private double feePerPerson;
-    private ParticipantManager participantManager;
+    private float costPerPerson;
+    private float feePerPerson;
     private string title;
 
-    public double CostPerPerson
+    ParticipantManager participantManager = new ParticipantManager();
+
+    public float CostPerPerson
     {
         get { return costPerPerson; }
-        set { costPerPerson = value; }
+        set {
+            if(value >= 0.0)
+            {
+                costPerPerson = value;
+            }
+        }
     }
 
-    public double FeePerPerson
+    public float FeePerPerson
     {
         get { return feePerPerson; }
-        set { feePerPerson = value; }
+        set
+        {
+            if (value >= 0.0)
+            {
+                feePerPerson = value;
+            }
+        }
     }
 
     public ParticipantManager Participants
@@ -27,7 +39,12 @@ public class EventManager
     public string Title
     {
         get { return title; }
-        set { title = value; }
+        set {
+            if(string.IsNullOrEmpty(value))
+            {
+                title = value;
+            }
+        }
     }
 
     public EventManager()
@@ -35,12 +52,12 @@ public class EventManager
         participantManager = new ParticipantManager();
     }
 
-    public double CalcTotalCost()
+    public float CalcTotalCost()
     {
         return costPerPerson * participantManager.Count;
     }
 
-    public double CalcTotalFees()
+    public float CalcTotalFees()
     {
         return feePerPerson * participantManager.Count;
     }

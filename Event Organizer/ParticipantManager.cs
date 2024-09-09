@@ -2,12 +2,12 @@
 
 public class ParticipantManager
 {
-	private List<Participant> participants;
+    private List<Participant> participants;
 
-	public ParticipantManager()
-	{
+    public ParticipantManager()
+    {
         participants = new List<Participant>();
-	}
+    }
 
     public int Count
     {
@@ -16,29 +16,33 @@ public class ParticipantManager
 
     public bool AddParticipant(Participant participantIn)
     {
+        if (participantIn == null)
+        {
+            return false;
+        }
         participants.Add(participantIn);
-        return true; // Assuming always successful for simplicity
+        return true;
     }
 
     public bool AddParticipant(string firstName, string lastName, Address addressIn)
     {
-        Participant newParticipant = new Participant
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Address = addressIn
-        };
-        return AddParticipant(newParticipant);
+        Participant newParticipant = new Participant { firstName, lastName, addressIn };
+        participants.Add(newParticipant);
+        return true;
     }
 
     public bool ChangeParticipantAt(Participant participantIn, int index)
     {
-        if (CheckIndex(index))
+        bool ok = true;
+
+        if (CheckIndex(index) && participantIn != null)
         {
             participants[index] = participantIn;
-            return true;
+        }else
+        {
+            ok = false;
         }
-        return false;
+        return ok;
     }
 
     private bool CheckIndex(int index)
@@ -51,9 +55,12 @@ public class ParticipantManager
         if (CheckIndex(index))
         {
             participants.RemoveAt(index);
-            return true;
         }
-        return false;
+        else
+        {
+            return false ;
+        }
+        return true;
     }
 
     public Participant GetParticipantAt(int index)
@@ -67,13 +74,14 @@ public class ParticipantManager
 
     public string[] GetParticipantsInfo()
     {
-        string[] infoArray = new string[participants.Count];
-        for (int i = 0; i < participants.Count; i++)
+        string[] infoStrArr = new string[participants.Count];
+        int i = 0;
+        foreach (Participant participantObject in participants)
         {
-            Participant participant = participants[i];
-            infoArray[i] = $"{participant.FirstName} {participant.LastName}, {participant.Address.Street}, {participant.Address.City}"; // Modify this as per your requirement
+            infoStrArr[i] = participantObject.ToString();
+            i++;
         }
-        return infoArray;
+        return infoStrArr;
     }
 
     public void TestValues()

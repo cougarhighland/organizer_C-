@@ -7,12 +7,18 @@ public class Address
     private Countries country;
     private string street;
     private string zipCode;
-
+    #region PROPERTIES
     // Properties
     public string City
     {
         get { return city; }
-        set { city = value; }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                city = value;
+            }
+        }
     }
 
     public Countries Country
@@ -32,53 +38,58 @@ public class Address
         get { return zipCode; }
         set { zipCode = value; }
     }
-
+    #endregion
+    #region CONSTRUCTOR 
     // Constructors
-    public Address():this(string.Empty,string.Empty,string.Empty)
+    public Address(string street, string zip, string city, Countries country)
     {
+        this.Street = street;
+        this.ZipCode = zip;
+        this.City = city;
+        this.Country = country;
+    }
 
+    public Address(string street, string zip, string city) : this(street, zip, city, Countries.Sverige)
+    {
+    }
+
+    public Address() : this(string.Empty, string.Empty, string.Empty, Countries.Sverige)
+    {
     }
 
     public Address(Address theOther)
     {
-        this.city = theOther.city;
-        this.country = theOther.country;
         this.street = theOther.street;
         this.zipCode = theOther.zipCode;
+        this.City = theOther.City;
+        this.Country = theOther.Country;
     }
 
-    public Address(string street, string zip, string city) : this(street, zip, city, Countries.Sverige)
-    { 
-
-    }
-    public Address(string street, string zip, string city, Countries country)
-    {
-        this.street = street;
-        this.zipCode = zip;
-        this.city = city;
-        this.country = country;
-    }
+    #endregion
 
     // Methods
     public string GetAddressLabel()
     {
-        return $"{street}, {city}, {zipCode}";
+        string strOut = street + Environment.NewLine;
+        strOut += zipCode + " " + city;
+        return strOut;
     }
 
     public string GetCountryString()
     {
-        return country.ToString();
+        string strCountry = country.ToString();
+        strCountry = strCountry.Replace("_", " ");
+        return strCountry;
     }
 
     public override string ToString()
     {
-        return GetAddressLabel();
+        string strOut = string.Format("{0, -25} {1, -8} {2, -1} {3}", street, zipCode, city, GetCountryString());
+        return strOut;
     }
 
     public bool Validate()
     {
-        // Add validation logic here
-        // For simplicity, assuming all fields must be non-null or non-empty
-        return !string.IsNullOrEmpty(street) && !string.IsNullOrEmpty(zipCode) && !string.IsNullOrEmpty(city);
+        return !string.IsNullOrEmpty(city);
     }
 }
