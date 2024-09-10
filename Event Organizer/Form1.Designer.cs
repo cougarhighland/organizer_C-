@@ -53,11 +53,6 @@
             label4 = new Label();
             label5 = new Label();
             lblFirstName = new Label();
-            lstParticipants = new ListView();
-            FullName = new ColumnHeader();
-            Address = new ColumnHeader();
-            zipCode = new ColumnHeader();
-            city = new ColumnHeader();
             label10 = new Label();
             label11 = new Label();
             btnChange = new Button();
@@ -73,6 +68,7 @@
             lblNumParticipants = new Label();
             city_err = new ErrorProvider(components);
             backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
+            lstParticipants = new ListBox();
             grpNewEvent.SuspendLayout();
             grpParticipants.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -196,7 +192,6 @@
             txtCity.Name = "txtCity";
             txtCity.Size = new Size(222, 23);
             txtCity.TabIndex = 10;
-            txtCity.TextChanged += txtCity_TextChanged;
             // 
             // label9
             // 
@@ -283,38 +278,6 @@
             lblFirstName.TabIndex = 0;
             lblFirstName.Text = "First Name";
             // 
-            // lstParticipants
-            // 
-            lstParticipants.Columns.AddRange(new ColumnHeader[] { FullName, Address, zipCode, city });
-            lstParticipants.FullRowSelect = true;
-            lstParticipants.HeaderStyle = ColumnHeaderStyle.None;
-            lstParticipants.Location = new Point(395, 45);
-            lstParticipants.Name = "lstParticipants";
-            lstParticipants.Size = new Size(552, 97);
-            lstParticipants.TabIndex = 8;
-            lstParticipants.UseCompatibleStateImageBehavior = false;
-            lstParticipants.View = View.Details;
-            lstParticipants.SelectedIndexChanged += lstParticipants_SelectedIndexChanged;
-            // 
-            // FullName
-            // 
-            FullName.Text = "fullName";
-            FullName.Width = 180;
-            // 
-            // Address
-            // 
-            Address.Text = "address";
-            Address.Width = 180;
-            // 
-            // zipCode
-            // 
-            zipCode.Text = "zipcode";
-            // 
-            // city
-            // 
-            city.Text = "city";
-            city.Width = 100;
-            // 
             // label10
             // 
             label10.AutoSize = true;
@@ -335,7 +298,7 @@
             // 
             // btnChange
             // 
-            btnChange.Location = new Point(428, 148);
+            btnChange.Location = new Point(407, 158);
             btnChange.Name = "btnChange";
             btnChange.Size = new Size(128, 23);
             btnChange.TabIndex = 7;
@@ -345,12 +308,13 @@
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(727, 148);
+            btnDelete.Location = new Point(759, 158);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(128, 23);
             btnDelete.TabIndex = 11;
             btnDelete.Text = "Delete";
             btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.Click += btnDelete_Click;
             // 
             // groupBox3
             // 
@@ -441,17 +405,26 @@
             // 
             city_err.ContainerControl = this;
             // 
+            // lstParticipants
+            // 
+            lstParticipants.FormattingEnabled = true;
+            lstParticipants.ItemHeight = 15;
+            lstParticipants.Location = new Point(407, 48);
+            lstParticipants.Name = "lstParticipants";
+            lstParticipants.Size = new Size(480, 94);
+            lstParticipants.TabIndex = 12;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1293, 557);
+            Controls.Add(lstParticipants);
             Controls.Add(groupBox3);
             Controls.Add(btnDelete);
             Controls.Add(btnChange);
             Controls.Add(label11);
             Controls.Add(label10);
-            Controls.Add(lstParticipants);
             Controls.Add(grpParticipants);
             Controls.Add(grpNewEvent);
             Name = "Form1";
@@ -494,7 +467,6 @@
         private Label label4;
         private Label label5;
         private Label lblFirstName;
-        private ListView lstParticipants;
         private Label label10;
         private Label label11;
         private Button btnChange;
@@ -508,11 +480,8 @@
         private TextBox txtTotalFees;
         private TextBox txtTotalCost;
         private TextBox txtNumParticipant;
-        private ColumnHeader FullName;
-        private ColumnHeader Address;
-        private ColumnHeader zipCode;
-        private ColumnHeader city;
         private ErrorProvider city_err;
         private System.ComponentModel.BackgroundWorker backgroundWorker3;
+        private ListBox lstParticipants;
     }
 }

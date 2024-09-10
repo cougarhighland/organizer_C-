@@ -26,7 +26,12 @@ public class ParticipantManager
 
     public bool AddParticipant(string firstName, string lastName, Address addressIn)
     {
-        Participant newParticipant = new Participant { firstName, lastName, addressIn };
+        Participant newParticipant = new Participant
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Address = addressIn
+        };
         participants.Add(newParticipant);
         return true;
     }

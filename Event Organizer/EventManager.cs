@@ -40,7 +40,7 @@ public class EventManager
     {
         get { return title; }
         set {
-            if(string.IsNullOrEmpty(value))
+            if(!string.IsNullOrEmpty(value))
             {
                 title = value;
             }

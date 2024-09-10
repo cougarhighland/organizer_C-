@@ -2,13 +2,12 @@ namespace Event_Organizer
 {
     public partial class Form1 : Form
     {
-        private EventManager eventManager = new EventManager();
-        private Address address;
+        private EventManager eventManager;
         public Form1()
         {
             InitializeComponent();
             // Hide the group box at the start
-            lstParticipants.Visible = false;
+            grpParticipants.Enabled = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -26,128 +25,192 @@ namespace Event_Organizer
             lstParticipants.Items.Clear();
         }
 
-        private void validateParticipantInfo()
+        private void UpdateGUI()
         {
-            string firstName = txtFirstName.Text;
-            string lastName = txtLastName.Text;
-            string street = txtStreet.Text;
-            string city = txtCity.Text;
-            string zipCode = txtZipCode.Text;
-
-
-            address = new Address(street, zipCode, city);
-            bool validateAddress = address.Validate();
-
-            if (validateAddress)
+            string[] strInfo = eventManager.Participants.GetParticipantsInfo();
+            if (strInfo != null)
             {
-                city_err.SetError(txtCity, string.Empty);
-                btnAdd.Enabled = true;
+                lstParticipants.Items.Clear();
+                lstParticipants.Items.AddRange(strInfo);
+                txtNumParticipant.Text = lstParticipants.Items.Count.ToString();
             }
-            else
-            {
-                city_err.SetError(txtCity, "City is required");
-                btnAdd.Enabled = false;
-            }
+            float totalCost = eventManager.CalcTotalCost();
+            float totalFees = eventManager.CalcTotalFees();
+            float surplusDeficit = totalFees - totalCost;
+            txtTotalCost.Text = totalCost.ToString("0.00");
+            txtTotalFees.Text = totalFees.ToString("0.00");
+            txtSurplusOrDeficit.Text = surplusDeficit.ToString("0.00");
+            txtNumParticipant.Text = eventManager.Participants.Count.ToString();
         }
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            string firstName = txtFirstName.Text;
-            string lastName = txtLastName.Text;
-            validateParticipantInfo();
-
-            if (btnAdd.Enabled)
+            Participant participant = new Participant();
+            if (ReadInput(ref participant))
             {
-                eventManager.Participants.AddParticipant(firstName, lastName, address);
-
-                // Retrieve participant information array
-                string[] participantInfoArray = eventManager.Participants.GetParticipantsInfo();
-                //clear the old list
-                lstParticipants.Items.Clear();
-                foreach (string participantInfo in participantInfoArray)
-                {
-                    // Split the participant info string using the delimiter
-                    string[] columns = participantInfo.Split('|');
-
-                    // Create a new ListViewItem for the first column (First Name)
-                    var listViewItem = new ListViewItem(columns[0]);
-
-                    listViewItem.SubItems.Add(columns[1]); // Street
-                    listViewItem.SubItems.Add(columns[2]); // zip code
-                    listViewItem.SubItems.Add(columns[3]); // City
-
-                    // Add the ListViewItem to the ListView
-                    lstParticipants.Items.Add(listViewItem);
-                }
-                txtLastName.Text = string.Empty;
-                txtLastName.Text = string.Empty;
-                txtStreet.Text = string.Empty;
-                txtCity.Text = string.Empty;
-                txtZipCode.Text = string.Empty;
-
-                if (lstParticipants.Visible)
-                {
-                    UpdateEventEconomy();
-                }
+                UpdateGUI();
             }
+        }
+
+        private bool ReadInput(ref Participant participant)
+        {
+            bool ok = ReadParticipantData(ref participant);
+            if (ok)
+            {
+                eventManager.Participants.AddParticipant(participant);
+            }
+            else
+            {
+                string strMsg = "first name, last name and city are required";
+                MessageBox.Show(strMsg);
+            }
+            return ok;
+        }
+
+        private bool ReadParticipantData(ref Participant participant)
+        {
+            participant.FirstName = txtFirstName.Text;
+            participant.LastName = txtLastName.Text;
+            Address address = ReadAddress();
+
+            participant.Address = address;
+
+            bool ok = address.Validate();
+            return ok;
+        }
+
+        private Address ReadAddress()
+        {
+            Address address = new Address();
+
+            address.Street = txtStreet.Text;
+            address.City = txtCity.Text;
+            address.ZipCode = txtZipCode.Text;
+            address.Country = (Countries)cmbCountry.SelectedIndex;
+
+            return address;
         }
 
         private void btnCreateEvent_Click(object sender, EventArgs e)
         {
-
-            UpdateEventEconomy();
-            lstParticipants.Visible = true;
+            EmptyTextBoxes(grpParticipants);
+            lstParticipants.Items.Clear();
+            CreateEvent();
         }
 
-        private void UpdateEventEconomy()
+        private void EmptyTextBoxes(GroupBox groupBox)
         {
-            string eventCost = txtCost.Text;
-            string eventFee = txtFee.Text;
-            float cost = 0.0f;
-            float fee = 0.0f;
-
-            try
+            foreach (Control control in groupBox.Controls)
             {
-                cost = float.Parse(eventCost);
-                fee = float.Parse(eventFee);
+                if (control is TextBox)
+                {
+                    ((TextBox)control).Clear();
+                }
             }
-            catch (FormatException)
-            {
-                MessageBox.Show("invalid input, please enter number");
-            }
-
-            int totalParticipants = eventManager.Participants.Count;
-            eventManager.CostPerPerson = cost;
-            eventManager.FeePerPerson = fee;
-            float totalCost = eventManager.CalcTotalCost();
-            float totalFees = eventManager.CalcTotalFees();
-            float surplusDeficit = totalFees - totalCost;
-
-            txtNumParticipant.Text = totalParticipants.ToString();
-            txtTotalCost.Text = totalCost.ToString();
-            txtTotalFees.Text = totalFees.ToString();
-            txtSurplusOrDeficit.Text = surplusDeficit.ToString();
-
         }
 
+        private void CreateEvent()
+        {
+            eventManager = new EventManager();
+            if (string.IsNullOrEmpty(txtTitle.Text)) txtTitle.Text = "Untitled Event";
 
+            eventManager.Title = txtTitle.Text + " By Xuan";
+            this.Text = eventManager.Title;
+
+            bool okCostAmount = ReadCostPerPerson();
+            bool okFeeAmount = ReadFeePerPerson();
+            if(okCostAmount && okFeeAmount)
+            {
+                MessageBox.Show("Event Created !");
+                grpParticipants.Enabled=true;
+                UpdateGUI();
+            }
+        }
+
+        private bool ReadCostPerPerson()
+        {
+            bool ok = true;
+            float amount = 0;
+            if(float.TryParse(txtCost.Text, out amount) && amount >= 0)
+            {
+                eventManager.CostPerPerson = amount;
+            }
+            else
+            {
+                MessageBox.Show("Invalid cost amount, try again!");
+                ok = false;
+            }
+            return ok;
+        }
+       
+        private bool ReadFeePerPerson()
+        {
+            bool ok = true;
+            float amount = 0;
+            if (float.TryParse(txtFee.Text, out amount) && amount >= 0)
+            {
+                eventManager.FeePerPerson = amount;
+            }
+            else
+            {
+                MessageBox.Show("Invalid fee amount, try again!");
+                ok = false;
+            }
+            return ok;
+        }
         private void lstParticipants_SelectedIndexChanged(object sender, EventArgs e)
         {
+            int index = lstParticipants.SelectedIndex;
+
+            if (index >= 0)
+            {
+                Participant participant = eventManager.Participants.GetParticipantAt(index);
+
+                txtFirstName.Text = participant.FirstName;
+                txtLastName.Text = participant.LastName;
+                txtStreet.Text = participant.Address.Street;
+                txtZipCode.Text = participant.Address.ZipCode;
+                txtCity.Text = participant.Address.City;
+                cmbCountry.SelectedIndex = (int)participant.Address.Country;
+            }
+            else
+            {
+                MessageBox.Show("Select an item");
+            }
 
         }
-
+        private int IsListBoxItemSelected()
+        {
+            int index = lstParticipants.SelectedIndex;
+            if (index < 0)
+            {
+                MessageBox.Show("Select an item in the list");
+                return -1;
+            }
+            else
+            {
+                return index;
+            }
+        }
         private void btnChange_Click(object sender, EventArgs e)
         {
-            lstParticipants.SelectedItems[0].SubItems[0].Text = "changed Name";
-            lstParticipants.SelectedItems[0].SubItems[1].Text = "changed street";
-            lstParticipants.SelectedItems[0].SubItems[2].Text = "changed zip code";
-            lstParticipants.SelectedItems[0].SubItems[3].Text = "changed city";
+            int index = IsListBoxItemSelected();
+            if (index < 0) return;
 
+            Participant participant = eventManager.Participants.GetParticipantAt(index);
+            if (ReadParticipantData(ref participant))
+            {
+                eventManager.Participants.ChangeParticipantAt(participant, index);
+                UpdateGUI();
+            }
 
         }
 
-        private void txtCity_TextChanged(object sender, EventArgs e)
+        private void btnDelete_Click(object sender, EventArgs e)
         {
-            if(!btnAdd.Enabled) validateParticipantInfo();
+            int index = lstParticipants.SelectedIndex;
+            if (index < 0) return;
+            eventManager.Participants.DeleteParticipantAt(index);
+            UpdateGUI() ;
         }
     }
 }
